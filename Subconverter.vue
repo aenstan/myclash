@@ -3,7 +3,9 @@
     <el-row style="margin-top: 10px">
       <el-col>
         <el-card>
-          <div slot="header">Subscription Converter</div>
+          <div slot="header">
+            My Subconverter
+          </div>
           <el-container>
             <el-form :model="form" label-width="120px" label-position="left" style="width: 100%">
               <el-form-item label="模式设置:">
@@ -24,6 +26,17 @@
                 </el-select>
               </el-form-item>
 
+              <div v-if="advanced === '2'">
+                <el-form-item label="后端地址:">
+                  <el-autocomplete
+                    style="width: 100%"
+                    v-model="form.customBackend"
+                    :fetch-suggestions="backendSearch"
+                    placeholder="点击输入"
+                  >
+                    <el-button slot="append" @click="gotoGayhub" icon="el-icon-link">前往项目仓库</el-button>
+                  </el-autocomplete>
+                </el-form-item>
                 <el-form-item label="远程配置:">
                   <el-select
                     v-model="form.remoteConfig"
@@ -44,27 +57,9 @@
                         :value="item.value"
                       ></el-option>
                     </el-option-group>
-                </el-select>
-              </el-form-item>
-              
-              <el-form-item label="后端地址:">
-              
-              <el-select
-                  v-model="form.customBackend"
-                  allow-create
-                  filterable
-                  placeholder="请选择"
-                  style="width: 100%"
-                >
-                  <el-option v-for="(v, k) in options.customBackend" :key="k" :label="k" :value="v"></el-option>
-                  
-                </el-select>
-              
-              </el-form-item>
-              
-              <div v-if="advanced === '2'">
-            
-
+                    <el-button slot="append" @click="gotoRemoteConfig" icon="el-icon-link">配置示例</el-button>
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="IncludeRemarks:">
                   <el-input v-model="form.includeRemarks" placeholder="节点名包含的关键字，支持正则" />
                 </el-form-item>
@@ -83,6 +78,9 @@
                     <el-popover v-model="form.extraset">
                       <el-row>
                         <el-checkbox v-model="form.sort" label="排序节点"></el-checkbox>
+                      </el-row>
+                      <el-row>
+                        <el-checkbox v-model="form.appendType" label="节点类型"></el-checkbox>
                       </el-row>
                       <el-row>
                         <el-checkbox v-model="form.udp" label="启用 UDP"></el-checkbox>
@@ -113,6 +111,17 @@
                   <el-button
                     slot="append"
                     v-clipboard:copy="customSubUrl"
+                    v-clipboard:success="onCopy"
+                    ref="copy-btn"
+                    icon="el-icon-document-copy"
+                  >复制</el-button>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="订阅短链接:">
+                <el-input class="copy-content" disabled v-model="curtomShortSubUrl">
+                  <el-button
+                    slot="append"
+                    v-clipboard:copy="curtomShortSubUrl"
                     v-clipboard:success="onCopy"
                     ref="copy-btn"
                     icon="el-icon-document-copy"
@@ -160,37 +169,21 @@
     </el-row>
 
     <el-dialog
-      title="Remote config upload"
       :visible.sync="dialogUploadConfigVisible"
       :show-close="false"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       width="700px"
     >
-      <el-form label-position="left" label-width="150px">
-        <el-form-item prop="uploadPasswordItem">
-          <div slot="label">
-            密码：
-            <el-popover trigger="hover" placement="right">
-              <el-link
-                type="primary"
-                :href="myBot"
-                target="_blank"
-                icon="el-icon-s-promotion"
-              >@CareyWong_bot</el-link>
-              <i class="el-icon-question" slot="reference"></i>
-            </el-popover>
-          </div>
-          <el-input v-model="uploadPassword" show-password placeholder="请输入密码" style="width: 250px"></el-input>
-        </el-form-item>
+      <div slot="title">
+        Remote config upload
+        <el-popover trigger="hover" placement="right" style="margin-left: 10px">
+          <el-link type="primary" :href="sampleConfig" target="_blank" icon="el-icon-info">参考配置</el-link>
+          <i class="el-icon-question" slot="reference"></i>
+        </el-popover>
+      </div>
+      <el-form label-position="left">
         <el-form-item prop="uploadConfig">
-          <div slot="label">
-            RemoteConfig：
-            <el-popover trigger="hover" placement="right">
-              <el-link type="primary" :href="sampleConfig" target="_blank" icon="el-icon-info">参考配置</el-link>
-              <i class="el-icon-question" slot="reference"></i>
-            </el-popover>
-          </div>
           <el-input
             v-model="uploadConfig"
             type="textarea"
@@ -213,18 +206,19 @@
 </template>
 
 <script>
+const project = "https://github.com/CareyWang/sub-web";
 const remoteConfigSample =
   "https://raw.githubusercontent.com/tindy2013/subconverter/master/base/config/example_external_config.ini";
 const gayhubRelease = "https://github.com/tindy2013/subconverter/releases";
-const defaultBackend = "http://localhost:25500/sub?";
-const shortUrlBackend = "https://api.wcc.best/short";
-const configUploadBackend = "http://localhost:25500/config/upload";
-const tgBotLink = "https://t.me/ACL4SSR";
+const defaultBackend = "https://aenstan.xyz/sub?";
+const shortUrlBackend = "https://s.wcc.best/short";
+const configUploadBackend = "https://aenstan.xyz/config/upload";
+const tgBotLink = "https://t.me/CareyWong_bot";
 
 export default {
   data() {
     return {
-      advanced: "1",
+      advanced: "2",
 
       options: {
         clientTypes: {
@@ -241,126 +235,14 @@ export default {
           ssr: "ssr",
           ssd: "ssd"
         },
-        customBackend: {
-          "自建api": "https://aenstan.xyz/sub?",
-          "gfwsb.114514.best(subconverter作者提供)":
-            "https://gfwsb.114514.best/sub?",
-          "api.wcc.best(sub-web作者提供)": "https://api.wcc.best/sub?"
-        },
         remoteConfig: [
           {
             label: "默认",
             options: [
               {
                 label: "自用配置",
-                value: "https://raw.githubusercontent.com/aenstan/myclash/master/ACL4SSR_Online_Full.ini"
-              }
-            ]
-          },
-          {
-            label: "ACL4SSR",
-            options: [
-              {
-                label: "ACL4SSR_Online 默认版 分组比较全 (与Github规则同步)",
                 value:
-                  "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online.ini"
-              },
-              {
-                label: "ACL4SSR_Online_Mini 精简版 (与Github规则同步)",
-                value:
-                  "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini.ini"
-              },
-              {
-                label: "ACL4SSR_Online_Mini_Fallback.ini 精简版 带故障转移 (与Github规则同步)",
-                value:
-                  "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini_Fallback.ini"
-              },
-              {
-                label: "ACL4SSR_Online_Full 全规则，重度用户使用 (与Github规则同步)",
-                value:
-                  "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Full.ini"
-              },
-              {
-                label: "ACL4SSR_Online_NoAuto 无自动测速 (与Github规则同步)",
-                value:
-                  "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_NoAuto.ini"
-              },
-              {
-                label: "ACL4SSR 本地 默认版 分组比较全",
-                value: "config/ACL4SSR.ini"
-              },
-              {
-                label: "ACL4SSR_Mini 本地 精简版",
-                value: "config/ACL4SSR_Mini.ini"
-              },
-              {
-                label: "ACL4SSR_BackCN 本地 回国",
-                value: "config/ACL4SSR_BackCN.ini"
-              },
-              {
-                label: "ACL4SSR_NoApple 本地 无苹果分流",
-                value: "config/ACL4SSR_NoApple.ini"
-              },
-              {
-                label: "ACL4SSR_NoAuto 本地 无自动测速 ",
-                value: "config/ACL4SSR_NoAuto.ini"
-              },
-              {
-                label: "ACL4SSR_NoAuto_NoApple 本地 无自动测速&无苹果分流",
-                value: "config/ACL4SSR_NoAuto_NoApple.ini"
-              },
-              {
-                label: "ACL4SSR_NoMicrosoft 本地 无微软分流",
-                value: "config/ACL4SSR_NoMicrosoft.ini"
-              },
-              {
-                label: "ACL4SSR_WithGFW 本地 GFW列表",
-                value: "config/ACL4SSR_WithGFW.ini"
-              }
-            ]
-          },
-          {
-            label: "universal",
-            options: [
-              {
-                label: "No-Urltest",
-                value:
-                  "https://raw.githubusercontent.com/CareyWang/sub-web/master/docs/universal/no-urltest.ini"
-              },
-              {
-                label: "Urltest",
-                value:
-                  "https://raw.githubusercontent.com/CareyWang/sub-web/master/docs/universal/urltest.ini"
-              }
-            ]
-          },
-          {
-            label: "customized",
-            options: [
-              {
-                label: "Maying",
-                value:
-                  "https://raw.githubusercontent.com/CareyWang/sub-web/master/docs/customized/maying.ini"
-              },
-              {
-                label: "Nexitally",
-                value:
-                  "https://raw.githubusercontent.com/CareyWang/sub-web/master/docs/customized/nexitally.ini"
-              },
-              {
-                label: "YoYu",
-                value:
-                  "https://raw.githubusercontent.com/CareyWang/sub-web/master/docs/customized/yoyu.ini"
-              },
-              {
-                label: "Ytoo",
-                value:
-                  "https://raw.githubusercontent.com/CareyWang/sub-web/master/docs/customized/ytoo.ini"
-              },
-              {
-                label: "贼船",
-                value:
-                  "https://raw.githubusercontent.com/CareyWang/sub-web/master/docs/customized/zeichuan.ini"
+                  "https://raw.githubusercontent.com/aenstan/myclash/master/ACL4SSR_Online_Full.ini"
               }
             ]
           },
@@ -370,7 +252,7 @@ export default {
               {
                 label: "NeteaseUnblock(仅规则，No-Urltest)",
                 value:
-                  "https://raw.githubusercontent.com/CareyWang/sub-web/master/docs/special/netease.ini"
+                  "https://raw.githubusercontent.com/CareyWang/Rules/master/RemoteConfig/special/netease.ini"
               }
             ]
           }
@@ -391,11 +273,13 @@ export default {
         udp: false,
         tfo: false,
         scv: false,
-        fdn: false
+        fdn: false,
+        appendType: false
       },
 
       loading: false,
       customSubUrl: "",
+      curtomShortSubUrl: "",
 
       dialogUploadConfigVisible: false,
       uploadConfig: "",
@@ -405,31 +289,24 @@ export default {
     };
   },
   created() {
-    document.title = "My Subscription Converter";
+    document.title = "My Subconverter";
   },
   mounted() {
     this.form.clientType = "clashr";
-    this.form.customBackend = "https://gfwsb.114514.best/sub?";
-    this.form.remoteConfig = "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online.ini";
     this.notify();
   },
   methods: {
     onCopy() {
       this.$message.success("Copied!");
     },
+    goToProject() {
+      window.open(project);
+    },
     gotoGayhub() {
       window.open(gayhubRelease);
     },
     gotoRemoteConfig() {
       window.open(remoteConfigSample);
-    },
-    createFilter(queryString) {
-      return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        );
-      };
     },
     clashInstall() {
       if (this.customSubUrl === "") {
@@ -454,15 +331,11 @@ export default {
         this.$message.error("订阅链接与客户端为必填项");
         return false;
       }
-      // 远程接口
+
       let backend =
         this.form.customBackend === ""
           ? defaultBackend
           : this.form.customBackend;
-      
-      // 远程配置
-      let config = this.form.remoteConfig === "" ? "" : this.form.remoteConfig;
-       
 
       let sourceSub = this.form.sourceSubUrl;
       sourceSub = sourceSub.replace(/[\n|\r|\n\r]/g, "|");
@@ -474,11 +347,11 @@ export default {
         "&url=" +
         encodeURIComponent(sourceSub);
 
-      if (config !== "") {
-        this.customSubUrl += "&config=" + encodeURIComponent(config);
-      }
-
       if (this.advanced === "2") {
+        if (this.form.remoteConfig !== "") {
+          this.customSubUrl +=
+            "&config=" + encodeURIComponent(this.form.remoteConfig);
+        }
         if (this.form.excludeRemarks !== "") {
           this.customSubUrl +=
             "&exclude=" + encodeURIComponent(this.form.excludeRemarks);
@@ -490,6 +363,10 @@ export default {
         if (this.form.filename !== "") {
           this.customSubUrl +=
             "&filename=" + encodeURIComponent(this.form.filename);
+        }
+        if (this.form.appendType) {
+          this.customSubUrl +=
+            "&append_type=" + this.form.appendType.toString();
         }
 
         this.customSubUrl +=
@@ -520,10 +397,18 @@ export default {
 
       this.loading = true;
 
+      let data = new FormData();
+      data.append("longUrl", btoa(this.customSubUrl));
+
       this.$axios
-        .get(shortUrlBackend + "?longUrl=" + btoa(this.customSubUrl))
+        .post(shortUrlBackend, data, {
+          header: {
+            "Content-Type": "application/form-data; charset=utf-8"
+          }
+        })
         .then(res => {
           if (res.data.Code === 1 && res.data.ShortUrl !== "") {
+            this.curtomShortSubUrl = res.data.ShortUrl;
             this.$copyText(res.data.ShortUrl);
             this.$message.success("短链接已复制到剪贴板");
           } else {
@@ -536,19 +421,6 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-    },
-    notify() {
-      const h = this.$createElement;
-
-      this.$notify({
-        title: "隐私提示",
-        type: "warning",
-        message: h(
-          "i",
-          { style: "color: teal" },
-          "各种订阅链接（短链接服务除外）生成纯前端实现，无隐私问题。默认提供后端转换服务，隐私担忧者请自行搭建后端服务。"
-        )
-      });
     },
     confirmUploadConfig() {
       if (this.uploadConfig === "") {
@@ -589,6 +461,23 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+    backendSearch(queryString, cb) {
+      let backends = this.options.backendOptions;
+
+      let results = queryString
+        ? backends.filter(this.createFilter(queryString))
+        : backends;
+
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return candidate => {
+        return (
+          candidate.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
+      };
     }
   }
 };
