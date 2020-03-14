@@ -213,11 +213,11 @@ const gayhubRelease = "https://github.com/tindy2013/subconverter/releases";
 const defaultBackend = "https://aenstan.xyz/sub?";
 const shortUrlBackend = "https://s.wcc.best/short";
 const configUploadBackend = "https://aenstan.xyz/config/upload";
-const tgBotLink = "https://t.me/CareyWong_bot";
 
 export default {
   data() {
     return {
+      backendVersion: '',
       advanced: "2",
 
       options: {
@@ -243,16 +243,6 @@ export default {
                 label: "自用配置",
                 value:
                   "https://raw.githubusercontent.com/aenstan/myclash/master/ACL4SSR_Online_Full.ini"
-              }
-            ]
-          },
-          {
-            label: "Special",
-            options: [
-              {
-                label: "NeteaseUnblock(仅规则，No-Urltest)",
-                value:
-                  "https://raw.githubusercontent.com/CareyWang/Rules/master/RemoteConfig/special/netease.ini"
               }
             ]
           }
@@ -284,7 +274,6 @@ export default {
       dialogUploadConfigVisible: false,
       uploadConfig: "",
       uploadPassword: "",
-      myBot: tgBotLink,
       sampleConfig: remoteConfigSample
     };
   },
@@ -294,6 +283,7 @@ export default {
   mounted() {
     this.form.clientType = "clashr";
     this.notify();
+    this.getBackendVersion();
   },
   methods: {
     onCopy() {
@@ -427,9 +417,7 @@ export default {
         this.$message.warning("远程配置不能为空");
         return false;
       }
-
       this.loading = true;
-
       let data = new FormData();
       data.append("password", this.uploadPassword);
       data.append("config", this.uploadConfig);
@@ -478,6 +466,11 @@ export default {
           candidate.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
         );
       };
+    },
+    getBackendVersion() {
+      this.$axios.get(defaultBackend.substring(0, defaultBackend.length - 5) + '/version').then(res => {
+        this.backendVersion = res.data.replace(/\n$/gm, '');
+      })
     }
   }
 };
