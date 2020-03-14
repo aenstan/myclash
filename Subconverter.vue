@@ -235,6 +235,7 @@ export default {
           ssr: "ssr",
           ssd: "ssd"
         },
+        backendOptions: [{ value: "http://35.221.195.132:25500/sub?" }],
         remoteConfig: [
           {
             label: "默认",
