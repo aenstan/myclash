@@ -1,7 +1,7 @@
 #docker build -t subconverter:latest
-#docker run -d -p 25500:25500 subconverter:latest
+#docker run -d -p 25500:25500 aenstan/subconverter:latest
 #docker build -t subweb:latest
-#docker run -d -p 10086:80 --restart always subweb:latest
+#docker run -d -p 10086:80 --restart always aenstan/subweb:latest
 #wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubiBackup/doubi/master/caddy_install.sh && chmod +x caddy_install.sh && bash caddy_install.sh
 #echo "example.com {
  gzip
