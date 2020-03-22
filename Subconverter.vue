@@ -5,6 +5,9 @@
         <el-card>
           <div slot="header">
             My Subconverter
+            <svg-icon icon-class="github" style="margin-left: 20px" @click="goToProject" />
+
+            <div style="display: inline-block; position:absolute; right: 20px">{{ backendVersion }}</div>
           </div>
           <el-container>
             <el-form :model="form" label-width="120px" label-position="left" style="width: 100%">
@@ -206,13 +209,13 @@
 </template>
 
 <script>
-const project = "https://github.com/CareyWang/sub-web";
+const project = "https://github.com/aenstan/sub-web";
 const remoteConfigSample =
   "https://raw.githubusercontent.com/tindy2013/subconverter/master/base/config/example_external_config.ini";
 const gayhubRelease = "https://github.com/tindy2013/subconverter/releases";
-const defaultBackend = "https://aenstan.xyz/sub?";
+const defaultBackend = "https://api.aenstan.xyz/sub?";
 const shortUrlBackend = "https://s.aenstan.xyz/short";
-const configUploadBackend = "https://aenstan.xyz/config/upload";
+const configUploadBackend = "https://api.aenstan.xyz/config/upload";
 
 export default {
   data() {
