@@ -52,5 +52,5 @@ sub.aenstan.xyz {
 tail -f /tmp/caddy.log
 #修改配置文件
 FROM tindy2013/subconverter:latest
-COPY base/ /base/
+COPY base/* /base/
 EXPOSE 25500
