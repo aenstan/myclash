@@ -16,7 +16,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubiBack
 #配置caddyfile
 echo "api.aenstan.xyz {
  gzip
- tls aenstan@qq.com
+ tls admin@gmail.com
  proxy / 35.221.195.132:25500 {
     websocket
     header_upstream Host {host}
@@ -36,7 +36,7 @@ s.aenstan.xyz {
 }
 sub.aenstan.xyz {
  gzip
- tls aenstan@qq.com
+ tls admin@gmail.com
  proxy / 35.221.195.132:10086 {
     websocket
     header_upstream Host {host}
