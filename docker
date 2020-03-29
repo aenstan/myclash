@@ -3,6 +3,11 @@ docker run -d -p 25500:25500 --restart always --name subconverter aenstan/subcon
 docker run -d -p 10086:80 --restart always --name subweb aenstan/subweb:update
 docker run -d -p 8002:8002 --restart always --name myurls aenstan/myurls:update
 docker run -d -p 6379:6379 --restart always --name myurls-redis redis:5
+docker run -d \
+    --name watchtower \
+    --restart unless-stopped \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    containrrr/watchtower -c
 #安装docker
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
