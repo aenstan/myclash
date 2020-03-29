@@ -54,3 +54,31 @@ tail -f /tmp/caddy.log
 FROM tindy2013/subconverter:latest
 COPY base/* /base/
 EXPOSE 25500
+============================================================================================================================================
+Step1. 创建Network
+
+docker network create my-network
+Step2. 创建Caddy配置文件
+
+mkdir -p /dockercnf/caddy \
+	&& vim /dockercnf/caddy/Caddyfile
+填入以下信息
+
+cloudreve.aenstan.xyz {
+  tls admin@gmail.com
+  proxy / cloudreve:5212 {
+    transparent
+  }
+}
+Step3. 启动Caddy服务
+
+docker run -d \
+  --name caddy \
+  -e "ACME_AGREE=true" \
+  -e "CADDYPATH=/etc/caddycerts" \
+  -v /dockercnf/caddy/certs:/etc/caddycerts \
+  -v /dockercnf/caddy/Caddyfile:/etc/Caddyfile \
+  --network my-network \
+  -p 80:80 -p 443:443 \
+  --restart unless-stopped \
+  abiosoft/caddy
