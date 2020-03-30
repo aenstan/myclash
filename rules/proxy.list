@@ -1,4 +1,9 @@
 # 代理列表
 # MyList && Other
 DOMAIN-SUFFIX,aneeo.com
+DOMAIN-SUFFIX,rsshub.app
+DOMAIN-SUFFIX,feedly.com
 DOMAIN-KEYWORD,aneeo
+DOMAIN-KEYWORD,rsshub
+DOMAIN-KEYWORD,feedly
+
