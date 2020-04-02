@@ -213,9 +213,9 @@ const project = "https://github.com/aenstan/sub-web";
 const remoteConfigSample =
   "https://raw.githubusercontent.com/tindy2013/subconverter/master/base/config/example_external_config.ini";
 const gayhubRelease = "https://github.com/tindy2013/subconverter/releases";
-const defaultBackend = "https://api.aenstan.xyz/sub?";
-const shortUrlBackend = "https://s.aenstan.xyz/short";
-const configUploadBackend = "https://api.aenstan.xyz/config/upload";
+const defaultBackend = "https://api.example.xyz/sub?";
+const shortUrlBackend = "https://s.example.xyz/short";
+const configUploadBackend = "https://api.example.xyz/config/upload";
 
 export default {
   data() {
