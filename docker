@@ -19,10 +19,10 @@ chmod +x /usr/local/bin/docker-compose
 #安装caddy
 wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubiBackup/doubi/master/caddy_install.sh && chmod +x caddy_install.sh && bash caddy_install.sh
 #配置caddyfile
-echo "api.aenstan.xyz {
+echo "api.example.xyz {
  gzip
  tls admin@gmail.com
- proxy / 35.221.195.132:25500 {
+ proxy / example:25500 {
     websocket
     header_upstream Host {host}
     header_upstream X-Real-IP {remote}
@@ -31,18 +31,18 @@ echo "api.aenstan.xyz {
     header_upstream X-Forwarded-Proto {scheme}
   }
 }
-s.aenstan.xyz {
+s.example.xyz {
  gzip
  tls admin@gmail.com
- proxy / 35.221.195.132:8002 {
+ proxy / example:8002 {
     transparent
     header_downstream Access-Control-Allow-Origin "*"
   }
 }
-sub.aenstan.xyz {
+sub.example.xyz {
  gzip
  tls admin@gmail.com
- proxy / 35.221.195.132:10086 {
+ proxy / example:10086 {
     websocket
     header_upstream Host {host}
     header_upstream X-Real-IP {remote}
@@ -69,7 +69,7 @@ mkdir -p /dockercnf/caddy \
 	&& vim /dockercnf/caddy/Caddyfile
 填入以下信息
 
-cloudreve.aenstan.xyz {
+cloudreve.example.xyz {
   tls admin@gmail.com
   proxy / cloudreve:5212 {
     transparent
