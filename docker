@@ -1,28 +1,29 @@
-#打包镜像
-docker run -d -p 25500:25500 --restart always --name subconverter aenstan/subconverter:update
-docker run -d -p 10086:80 --restart always --name subweb aenstan/subweb:update
-docker run -d -p 8002:8002 --restart always --name myurls aenstan/myurls:update
-docker run -d -p 6379:6379 --restart always --name myurls-redis redis:5
-docker run -d \
-    --name watchtower \
-    --restart unless-stopped \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    containrrr/watchtower -c
-#安装docker
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
-sudo yum install docker-ce docker-ce-cli containerd.io
+环境准备
+debian安装和启动docker
+$ sudo apt-get update
+curl -fsSL get.docker.com -o get-docker.sh
+wget -qO- https://get.docker.com/ | bash
+sudo sh get-docker.sh
 sudo systemctl start docker
-#安装docker-compose
+
+安装docker-compose
 curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
-#安装caddy
+
+docker方式
+打包镜像
+docker run -d -p 25500:25500 --restart always --name subconverter aenstan/subconverter:update
+docker run -d -p 10086:80 --restart always --name subweb aenstan/subweb:update
+docker run -d --restart always --name myurls aenstan/myurls:update -domain example.com -port 8002 -conn ip:6379 -passwd '' -ttl 90
+docker run -d -p 6379:6379 --restart always --name myurls-redis redis:5
+
+安装caddy
 wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubiBackup/doubi/master/caddy_install.sh && chmod +x caddy_install.sh && bash caddy_install.sh
-#配置caddyfile
+配置caddyfile
 echo "api.example.xyz {
  gzip
  tls admin@gmail.com
- proxy / example:25500 {
+ proxy / ip:25500 {
     websocket
     header_upstream Host {host}
     header_upstream X-Real-IP {remote}
@@ -34,7 +35,7 @@ echo "api.example.xyz {
 s.example.xyz {
  gzip
  tls admin@gmail.com
- proxy / example:8002 {
+ proxy / ip:8002 {
     transparent
     header_downstream Access-Control-Allow-Origin "*"
   }
@@ -42,7 +43,7 @@ s.example.xyz {
 sub.example.xyz {
  gzip
  tls admin@gmail.com
- proxy / example:10086 {
+ proxy / ip:10086 {
     websocket
     header_upstream Host {host}
     header_upstream X-Real-IP {remote}
@@ -51,32 +52,89 @@ sub.example.xyz {
     header_upstream X-Forwarded-Proto {scheme}
   }
 }" > /usr/local/caddy/Caddyfile
-#重启caddy
+重启caddy
 /etc/init.d/caddy restart
-#查看caddy启动日志
+查看caddy启动日志
 tail -f /tmp/caddy.log
-#修改配置文件
-FROM tindy2013/subconverter:latest
-COPY base/* /base/
-EXPOSE 25500
-============================================================================================================================================
-Step1. 创建Network
 
+docker-compose方式
+创建docker-compose.yaml
+version: "3"
+services:
+  subweb:
+    image: "aenstan/subweb:update"
+    container_name: subweb
+    restart: always
+    ports: 
+      - "${SUBWEB_PORT}:80"
+
+  subconverter:
+    image: "aenstan/subconverter:update"
+    container_name: subconverter
+    restart: always
+    ports: 
+      - "${SUBCONVERTER_PORT}:25500"
+      
+  myurls:
+    image: "aenstan/myurls:update"
+    container_name: myurls
+    restart: always
+    ports:
+      - "${MYURLS_PORT}:8002"
+    depends_on:
+      - myurls-redis
+    entrypoint: ["/app/myurls", "-domain", "${MYURLS_DOMAIN}", "-conn", "myurls-redis:6379", "-ttl", "${MYURLS_TTL}"]
+  
+  myurls-redis:
+    image: "redis:5"
+    container_name: myurls-redis
+    restart: always
+    expose:
+      - "6379"
+      
+docker-compose 部署项目
+docker-compose up -d
+
+docker运行caddy 
+创建Network
 docker network create my-network
-Step2. 创建Caddy配置文件
-
+创建Caddy配置文件
 mkdir -p /dockercnf/caddy \
-	&& vim /dockercnf/caddy/Caddyfile
-填入以下信息
-
-cloudreve.example.xyz {
-  tls admin@gmail.com
-  proxy / cloudreve:5212 {
-    transparent
+	&& nano /dockercnf/caddy/Caddyfile
+Caddy配置文件示例
+api.example.xyz {
+ gzip
+ tls admin@gmail.com
+ proxy / ip:25500 {
+    websocket
+    header_upstream Host {host}
+    header_upstream X-Real-IP {remote}
+    header_upstream X-Forwarded-For {remote}
+    header_upstream X-Forwarded-Port {server_port}
+    header_upstream X-Forwarded-Proto {scheme}
   }
 }
-Step3. 启动Caddy服务
-
+s.example.xyz {
+ gzip
+ tls admin@gmail.com
+ proxy / ip:8002 {
+    transparent
+    header_downstream Access-Control-Allow-Origin "*"
+  }
+}
+sub.example.xyz {
+ gzip
+ tls admin@gmail.com
+ proxy / ip:10086 {
+    websocket
+    header_upstream Host {host}
+    header_upstream X-Real-IP {remote}
+    header_upstream X-Forwarded-For {remote}
+    header_upstream X-Forwarded-Port {server_port}
+    header_upstream X-Forwarded-Proto {scheme}
+  }
+}
+启动Caddy服务
 docker run -d \
   --name caddy \
   -e "ACME_AGREE=true" \
@@ -87,3 +145,10 @@ docker run -d \
   -p 80:80 -p 443:443 \
   --restart unless-stopped \
   abiosoft/caddy
+  
+安装watchtower
+docker run -d \
+    --name watchtower \
+    --restart unless-stopped \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    containrrr/watchtower -c
