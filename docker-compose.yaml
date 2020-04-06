@@ -5,24 +5,24 @@ services:
     container_name: subweb
     restart: always
     ports: 
-      - "${SUBWEB_PORT}:80"
+      - "10086:80"
 
   subconverter:
     image: "aenstan/subconverter:update"
     container_name: subconverter
     restart: always
     ports: 
-      - "${SUBCONVERTER_PORT}:25500"
+      - "25500:25500"
       
   myurls:
     image: "aenstan/myurls:update"
     container_name: myurls
     restart: always
     ports:
-      - "${MYURLS_PORT}:8002"
+      - "8002:8002"
     depends_on:
       - myurls-redis
-    entrypoint: ["/app/myurls", "-domain", "${MYURLS_DOMAIN}", "-conn", "myurls-redis:6379", "-ttl", "${MYURLS_TTL}"]
+    entrypoint: ["/app/myurls", "-domain", "s.aenstan.xyz", "-conn", "myurls-redis:6379", "-ttl", "365"]
   
   myurls-redis:
     image: "redis:5"
@@ -30,4 +30,22 @@ services:
     restart: always
     expose:
       - "6379"
+      
+  caddy:
+    image: "abiosoft/caddy"
+    container_name: caddy
+    restart: always
+    network_mode: "my-network"
+    environment:
+      - TZ=Asia/Shanghai
+      - agree
+      - email admin@gmail.com
+      - ACME_AGREE=true
+      - CADDYPATH=/etc/caddycerts
+    volumes:
+      - "/root/caddy/certs:/etc/caddycerts"
+      - "/root/caddy/Caddyfile:/etc/Caddyfile"
+    ports:
+      - "80:80"
+      - "443:443"
 
