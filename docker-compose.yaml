@@ -1,21 +1,21 @@
 version: "3"
 services:
   subweb:
-    image: "aenstan/subweb:update"
+    image: "aenstan/subweb:latest"
     container_name: subweb
     restart: always
     ports: 
       - "10086:80"
 
   subconverter:
-    image: "aenstan/subconverter:update"
+    image: "aenstan/subconverter:latest"
     container_name: subconverter
     restart: always
     ports: 
       - "25500:25500"
       
   myurls:
-    image: "aenstan/myurls:update"
+    image: "aenstan/myurls:latest"
     container_name: myurls
     restart: always
     ports:
