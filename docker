@@ -12,9 +12,9 @@ chmod +x /usr/local/bin/docker-compose
 
 docker方式
 打包镜像
-docker run -d -p 25500:25500 --restart always --name subconverter aenstan/subconverter:update
-docker run -d -p 10086:80 --restart always --name subweb aenstan/subweb:update
-docker run -d --restart always --name myurls aenstan/myurls:update -domain example.com -port 8002 -conn ip:6379 -passwd '' -ttl 90
+docker run -d -p 25500:25500 --restart always --name subconverter aenstan/subconverter:latest
+docker run -d -p 10086:80 --restart always --name subweb aenstan/subweb:latest
+docker run -d --restart always --name myurls aenstan/myurls:latest -domain example.com -port 8002 -conn ip:6379 -passwd '' -ttl 90
 docker run -d -p 6379:6379 --restart always --name myurls-redis redis:5
 
 安装caddy
