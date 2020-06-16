@@ -26,14 +26,18 @@ const repository = [
     url: "https://github.com/paradiseduo/ClashXR/releases",
   },
   {
-    name: "Subweb",
-    url: "https://github.com/CareyWang/sub-web",
+    name: "iCopy",
+    url: "https://github.com/fxxkrlab/iCopy",
   },
   {
     name: "Openclash",
     url: "https://github.com/vernesong/OpenClash/releases"
   },
   {
+    name: "rclone mod",
+    url: "https://github.com/mawaya/rclone/releases"
+  },
+  {  
     name: "Clash内核",
     url: "https://github.com/BROBIRD/clash/releases"
   }
