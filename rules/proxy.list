@@ -14,6 +14,10 @@ DOMAIN-SUFFIX,paofu.cloud
 DOMAIN-SUFFIX,gdaily.org
 DOMAIN-SUFFIX,netlify.app
 DOMAIN-SUFFIX,ark.to
+DOMAIN-SUFFIX,firebaseio.com
+DOMAIN-SUFFIX,gitbook.com
+DOMAIN-KEYWORD,firebaseio
+DOMAIN-KEYWORD,gitbook
 DOMAIN-KEYWORD,limbopro
 DOMAIN-KEYWORD,aneeo
 DOMAIN-KEYWORD,rsshub
