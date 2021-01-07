@@ -20,6 +20,7 @@ DOMAIN-SUFFIX,nextcloud.com
 DOMAIN-SUFFIX,freenom.com
 DOMAIN-SUFFIX,lrepacks.ru
 DOMAIN-SUFFIX,nintendo.net
+DOMAIN-SUFFIX,nicegram.app
 DOMAIN-KEYWORD,FIREBASEIO
 DOMAIN-KEYWORD,gitbook
 DOMAIN-KEYWORD,limbopro
@@ -36,3 +37,4 @@ DOMAIN-KEYWORD,nextcloud
 DOMAIN-KEYWORD,freenom.com
 DOMAIN-KEYWORD,lrepacks
 DOMAIN-KEYWORD,nintendo
+DOMAIN-KEYWORD,nicegram
