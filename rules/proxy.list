@@ -1,5 +1,6 @@
 # 代理列表
 # MyList && Other
+DOMAIN-SUFFIX,jdsharedresourcescdn.azureedge.net
 DOMAIN-SUFFIX,githubusercontent.com
 DOMAIN-SUFFIX,aneeo.com
 DOMAIN-SUFFIX,rsshub.app
@@ -22,6 +23,8 @@ DOMAIN-SUFFIX,freenom.com
 DOMAIN-SUFFIX,lrepacks.ru
 DOMAIN-SUFFIX,nintendo.net
 DOMAIN-SUFFIX,nicegram.app
+DOMAIN-KEYWORD,jdsharedresourcescdn
+DOMAIN-KEYWORD,azureedge
 DOMAIN-KEYWORD,FIREBASEIO
 DOMAIN-KEYWORD,gitbook
 DOMAIN-KEYWORD,limbopro
