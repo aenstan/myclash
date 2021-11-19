@@ -23,6 +23,7 @@ DOMAIN-SUFFIX,freenom.com
 DOMAIN-SUFFIX,lrepacks.ru
 DOMAIN-SUFFIX,nintendo.net
 DOMAIN-SUFFIX,nicegram.app
+DOMAIN-SUFFIX,wallhaven.cc
 DOMAIN-KEYWORD,jdsharedresourcescdn
 DOMAIN-KEYWORD,azureedge
 DOMAIN-KEYWORD,FIREBASEIO
@@ -42,3 +43,4 @@ DOMAIN-KEYWORD,freenom.com
 DOMAIN-KEYWORD,lrepacks
 DOMAIN-KEYWORD,nintendo
 DOMAIN-KEYWORD,nicegram
+DOMAIN-KEYWORD,wallhaven
