@@ -1,9 +1,5 @@
 # 代理列表
 # MyList && Other
-DOMAIN-SUFFIX,nbys1.tv
-DOMAIN-SUFFIX,usa1.jmsooo.com
-DOMAIN-SUFFIX,usa2.jmsooo.com
-DOMAIN-SUFFIX,emby.maying.club
 DOMAIN-SUFFIX,jdsharedresourcescdn.azureedge.net
 DOMAIN-SUFFIX,githubusercontent.com
 DOMAIN-SUFFIX,aneeo.com
@@ -48,4 +44,3 @@ DOMAIN-KEYWORD,lrepacks
 DOMAIN-KEYWORD,nintendo
 DOMAIN-KEYWORD,nicegram
 DOMAIN-KEYWORD,wallhaven
-DOMAIN-KEYWORD,nbys
