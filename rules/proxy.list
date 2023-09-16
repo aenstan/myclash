@@ -26,6 +26,8 @@ DOMAIN-SUFFIX,nicegram.app
 DOMAIN-SUFFIX,wallhaven.cc
 #DOMAIN-SUFFIX,docker.io
 #DOMAIN-SUFFIX,docker.com
+DOMAIN-SUFFIX,nivod4.tv
+DOMAIN-KEYWORD,nivod
 DOMAIN-KEYWORD,jdsharedresourcescdn
 DOMAIN-KEYWORD,azureedge
 DOMAIN-KEYWORD,FIREBASEIO
