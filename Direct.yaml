@@ -1,4 +1,4 @@
 payload:
   - DOMAIN-SUFFIX,juliangip.com
-  - DOMAIN-SUFFIX,eu.org
-  - DOMAIN-KEYWORD,aenstan
+  #- DOMAIN-SUFFIX,eu.org
+  #- DOMAIN-KEYWORD,aenstan
