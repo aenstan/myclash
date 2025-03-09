@@ -6,7 +6,7 @@
 //然后点歌
 
 [rewrite_local]
-^https:\/\/api\.dragonlongzhu\.cn\/.* url script-response-body https://raw.githubusercontent.com/axs66/qx/main/mkqqyy.js
+^https:\/\/api\.dragonlongzhu\.cn\/.* url script-response-body https://raw.githubusercontent.com/aenstan/myclash/refs/heads/master/mkqqyy.js
 
 [mitm] 
 hostname = api.dragonlongzhu.cn
